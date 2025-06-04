@@ -1,6 +1,7 @@
 import random
 import streamlit as st
 
+# ─── LOAD WORDS ONCE ───────────────────────────────────────────────────────────
 @st.cache_data
 def load_words():
     words = []
@@ -17,40 +18,67 @@ def load_words():
                     pass
     return words
 
+# ─── SESSION‐STATE HELPERS ────────────────────────────────────────────────────
 def pick_new_word():
     w, a = random.choice(load_words())
-    st.session_state.word = w
+    st.session_state.word   = w
     st.session_state.answer = a
-    st.session_state.guess = None
+    st.session_state.guess  = None
 
-# On first run, initialise
+# initialize on first run
+if "score" not in st.session_state:
+    st.session_state.score = 0
+if "milestones" not in st.session_state:
+    st.session_state.milestones = []
 if "word" not in st.session_state:
     pick_new_word()
 
+# ─── MAIN UI ──────────────────────────────────────────────────────────────────
 st.title("Obviate Test")
+
+# move the score placeholder here, right under the title
+score_ph = st.empty()
+score_ph.markdown(f"**Score:** {st.session_state.score}")
+
 st.write(f"## {st.session_state.word}")
 
-# 1) Show the three buttons and capture clicks
+# 1) The three choice‐buttons
 cols = st.columns(3)
-KEY = ["Proximate", "Plural", "Obviate"]
-clicked = {i: cols[i].button(KEY[i]) for i in range(3)}
+KEYS = ["Proximate", "Plural", "Obviate"]
+clicked = {i: cols[i].button(KEYS[i]) for i in range(3)}
 
-# 2) If any was clicked, immediately record the guess
+# 2) On first click, record guess, update score & placeholder, celebrate if needed
 if st.session_state.guess is None:
     for i in range(3):
         if clicked[i]:
             st.session_state.guess = i + 1
+
+            # update score
+            if st.session_state.guess == st.session_state.answer:
+                st.session_state.score += 1
+            else:
+                st.session_state.score -= 1
+
+            # update the placeholder right away
+            score_ph.markdown(f"**Score:** {st.session_state.score}")
+
+            # balloon on fresh multiples of 10
+            ns = st.session_state.score
+            if ns > 0 and ns % 10 == 0 and ns not in st.session_state.milestones:
+                st.session_state.milestones.append(ns)
+                st.balloons()
+
             break
 
-# 3) Feedback & Next
+# 3) Feedback & Next button
 if st.session_state.guess is not None:
     if st.session_state.guess == st.session_state.answer:
         st.success("✅ Correct!")
     else:
         st.error(
-            f"❌ Incorrect. You chose {KEY[st.session_state.guess]}, "
-            f"but the right button was {KEY[st.session_state.answer]}."
+            f"❌ Incorrect. You chose {KEYS[st.session_state.guess - 1]}, "
+            f"but the right button was {KEYS[st.session_state.answer - 1]}."
         )
 
-    # ← the only change: use on_click instead of an if‐wrapper
+    # reset guess (and load a new word) when they hit Next
     st.button("Next", on_click=pick_new_word)
