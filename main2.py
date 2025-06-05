@@ -46,11 +46,17 @@ def main():
     st.title("Obviate Test  - Level 2")
     st.write(f"**Score:** {st.session_state.score}")
 
-    st.write("##### Identify the nouns in the sentence below (obviate or proximate):")
+    st.write("##### Identify the nouns in the sentence below and categorize them as either obviate or proximate:")
     # ─── DISPLAY THE PHRASE WITH BIGGER NOUNS ─────────────────────────────────────
     
-    st.markdown(f"### {st.session_state.noun1.title()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{st.session_state.verb}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{st.session_state.noun2}.", unsafe_allow_html=True)
-
+    st.markdown(f"""
+<h3 style="word-spacing: 1.5em;">
+<span style="white-space: nowrap;">{st.session_state.noun1.title()}</span> 
+<span style="white-space: nowrap;">{st.session_state.verb}</span> 
+<span style="white-space: nowrap;">{st.session_state.noun2}</span>.
+</h3>
+""", unsafe_allow_html=True)
+    
     # ─── QUIZ FORM: TWO RADIOS SIDE-BY-SIDE + SUBMIT ──────────────────────────────
     if not st.session_state.submitted:
         with st.form("quiz_form"):
