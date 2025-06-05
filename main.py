@@ -1,6 +1,7 @@
 import random
 import streamlit as st
 
+
 # ─── LOAD WORDS ONCE ───────────────────────────────────────────────────────────
 @st.cache_data
 def load_words():
@@ -18,12 +19,13 @@ def load_words():
                     pass
     return words
 
+
 # ─── SESSION‐STATE HELPERS ────────────────────────────────────────────────────
 def pick_new_word():
     w, a = random.choice(load_words())
-    st.session_state.word   = w
+    st.session_state.word = w
     st.session_state.answer = a
-    st.session_state.guess  = None
+    st.session_state.guess = None
 
 
 def main():

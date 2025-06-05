@@ -8,4 +8,3 @@ st.write("# Obviate Test")
 st.write("## Select a level from left to play")
 
 st.sidebar.success("Select a level above.")
-
