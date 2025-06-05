@@ -20,6 +20,11 @@ def pick_new_round():
     for k in ("form_left", "form_right", "left_answer", "right_answer", "submitted"):
         st.session_state.pop(k, None)
 
+    # Increment round counter to force radio button reset
+    if "round_counter" not in st.session_state:
+        st.session_state.round_counter = 0
+    st.session_state.round_counter += 1
+
     # Choose one obviate noun, one proximate noun, one verb
     n_obv = random.choice(obv_nouns)
     n_prox = random.choice(prox_nouns)
@@ -43,6 +48,8 @@ def main():
         st.session_state.score = 0
     if "milestones" not in st.session_state:
         st.session_state.milestones = []
+    if "round_counter" not in st.session_state:
+        st.session_state.round_counter = 0
     if "noun1" not in st.session_state:
         pick_new_round()
 
@@ -68,23 +75,30 @@ def main():
 
     # ─── QUIZ FORM: TWO RADIOS SIDE-BY-SIDE + SUBMIT ──────────────────────────────
     if not st.session_state.submitted:
-        with st.form("quiz_form"):
+        with st.form(f"quiz_form_{st.session_state.round_counter}"):
             colA, colB = st.columns(2)
             left_choice = colA.radio(
                 "First noun is:",
                 ["Proximate", "Obviate"],
                 horizontal=True,
-                key="form_left",
+                key=f"form_left_{st.session_state.round_counter}",
+                index=None  # This ensures no default selection
             )
             right_choice = colB.radio(
                 "Second noun is:",
                 ["Proximate", "Obviate"],
                 horizontal=True,
-                key="form_right",
+                key=f"form_right_{st.session_state.round_counter}",
+                index=None  # This ensures no default selection
             )
             submitted = st.form_submit_button("Submit")
 
             if submitted:
+                # Check if both radio buttons have been selected
+                if left_choice is None or right_choice is None:
+                    st.error("Please select an option for both nouns before submitting.")
+                    return
+                
                 # store answers
                 st.session_state.left_answer = left_choice
                 st.session_state.right_answer = right_choice
@@ -118,3 +132,7 @@ def main():
             )
 
         st.button("Next", on_click=pick_new_round)
+
+
+if __name__ == "__main__":
+    main()
