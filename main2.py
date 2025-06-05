@@ -48,10 +48,8 @@ def main():
 
     st.write("##### Identify the nouns in the sentence below (obviate or proximate):")
     # ─── DISPLAY THE PHRASE WITH BIGGER NOUNS ─────────────────────────────────────
-    col1, col2, col3 = st.columns([4, 4, 4])
-    col1.markdown(f"### {st.session_state.noun1.title()}")
-    col2.markdown(f"### {st.session_state.verb}")
-    col3.markdown(f"### {st.session_state.noun2}.")
+    
+    st.markdown(f"### {st.session_state.noun1.title()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{st.session_state.verb}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{st.session_state.noun2}.", unsafe_allow_html=True)
 
     # ─── QUIZ FORM: TWO RADIOS SIDE-BY-SIDE + SUBMIT ──────────────────────────────
     if not st.session_state.submitted:
